@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            background: #7f0df1;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            width: 400px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .dashboard-container:hover {
+            transform: scale(1.02);
+        }
+
+        /* Heading */
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .tab {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            background: linear-gradient(90deg, #ff9966, #ff5e62);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(255, 94, 98, 0.3);
+        }
+
+        .tab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.5);
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background: linear-gradient(90deg, #ff4b5c, #d32f2f);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .dashboard-container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            .tab {
+                font-size: 16px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, Student! 🎓</h2>
+        <button class="tab" onclick="location.href='student.html'">📌 Attendance</button>
+        <button class="tab" onclick="location.href='studentmark.html'">📊 Marks</button>
+        <button class="tab" onclick="location.href='recommendation.html'">📚 Recommendations</button>
+        <button class="tab" onclick="location.href='feedback.html'">📝 Feedback Form</button>
+        <button class="tab logout-btn" onclick="logout()">🚪 Logout</button>
+    </div>
+
+    <script>
+        // Redirect to login page if not logged in
+        if (localStorage.getItem("role") !== "student") {
+            window.location.href = "login.html";
+        }
+
+        function logout() {
+            localStorage.removeItem("role"); // Clear login state
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background:#7f0df1;
+            margin: 50px;
+        }
+        .form-container {
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #5648a2;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Feedback Form</h2>
+        
+        <form id="feedbackForm">
+            <label for="subject">Select Subject:</label>
+            <select id="subject">
+                <option value="SST">SST</option>
+                <option value="Science">Science</option>
+                <option value="Maths">Maths</option>
+                <option value="English">English</option>
+            </select>
+
+            <label for="teacher">Teacher's Name:</label>
+            <input type="text" id="teacher" placeholder="Enter teacher's name" required>
+
+            <label for="rating">Rate (1-5):</label>
+            <select id="rating">
+                <option value="1">⭐ (1)</option>
+                <option value="2">⭐⭐ (2)</option>
+                <option value="3">⭐⭐⭐ (3)</option>
+                <option value="4">⭐⭐⭐⭐ (4)</option>
+                <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+            </select>
+
+            <button type="button" onclick="submitFeedback()">Submit Feedback</button>
+        </form>
+
+        <button onclick="goBack()">Back to Dashboard</button>
+    </div>
+
+    <script>
+        function submitFeedback() {
+            let subject = document.getElementById("subject").value;
+            let teacher = document.getElementById("teacher").value;
+            let rating = document.getElementById("rating").value;
+
+            if (teacher.trim() === "") {
+                alert("Please enter the teacher's name.");
+                return;
+            }
+
+            alert(`Feedback Submitted!\nSubject: ${subject}\nTeacher: ${teacher}\nRating: ${rating} ⭐`);
+            
+            // You can add backend code here to store the feedback in a database
+        }
+
+        function goBack() {
+            window.location.href = "dashboard.html";
+        }
+        function submitFeedback() {
+    let subject = document.getElementById("subject").value;
+    let teacher = document.getElementById("teacher").value;
+    let rating = document.getElementById("rating").value;
+
+    if (teacher.trim() === "") {
+        alert("Please enter the teacher's name.");
+        return;
+    }
+
+    let feedbackData = { subject, teacher, rating };
+
+    // Retrieve existing feedback or create a new list
+    let feedbackList = JSON.parse(localStorage.getItem("feedbackList")) || [];
+    feedbackList.push(feedbackData);
+
+    // Save updated feedback list
+    localStorage.setItem("feedbackList", JSON.stringify(feedbackList));
+
+    alert("Feedback submitted successfully!");
+}
+
+    </script>
+</body>
+</html> 
+

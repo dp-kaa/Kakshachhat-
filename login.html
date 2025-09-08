@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #7f0df1;
+            margin: 0;
+        }
+
+        /* Container Box */
+        .container {
+            width: 380px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Input Fields */
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: none;
+            outline: none;
+            border-radius: 8px;
+            background: #f3f3f3;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .input-field:focus {
+            background: #e0e0e0;
+        }
+
+        /* Button Styling */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background: #5648a2;
+        }
+
+        /* Error Message */
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <input type="text" id="username" class="input-field" placeholder="Username">
+        <input type="password" id="password" class="input-field" placeholder="Password">
+        <button class="btn" onclick="login()">Login</button>
+        <p id="error-msg" class="error-message"></p>
+    </div>
+
+    <script>
+        function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            if (username === "abc" && password === "abc") {
+                localStorage.setItem("role", "student");
+                window.location.href = "dashboard.html"; 
+            } 
+            else if (username === "def" && password === "def") {
+                localStorage.setItem("role", "teacher");
+                localStorage.setItem("username", username);
+                window.location.href = "teacherdashboard.html";
+            } 
+            else {
+                document.getElementById("error-msg").innerText = "❌ Invalid Credentials!";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Marks Entry</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            background: #7f0df1;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Form Container */
+        .form-container {
+            width: 600px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .form-container:hover {
+            transform: scale(1.02);
+        }
+
+        /* Heading */
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Labels */
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            text-align: left;
+            color: white;
+        }
+
+        /* Input Fields */
+        select, input, button, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        /* Buttons */
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            background: #5648a2;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            color: black;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .student-row input {
+            width: 60px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .form-container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Enter Student Marks</h2>
+        
+        <form id="marksForm">
+            <label for="class">Select Class:</label>
+            <select id="class" required>
+                <option value="">--Select Class--</option>
+                <option value="Class 9">Class 9</option>
+                <option value="Class 10">Class 10</option>
+                <option value="Class 11">Class 11</option>
+                <option value="Class 12">Class 12</option>
+            </select>
+
+            <label for="subject">Select Subject:</label>
+            <select id="subject" required>
+                <option value="">--Select Subject--</option>
+                <option value="Maths">Maths</option>
+                <option value="Science">Science</option>
+                <option value="English">English</option>
+                <option value="SST">SST</option>
+            </select>
+
+            <label for="examType">Exam Type:</label>
+            <select id="examType" required>
+                <option value="">--Select Exam--</option>
+                <option value="Quiz">Quiz</option>
+                <option value="Midterm">Midterm</option>
+                <option value="Endterm">Endterm</option>
+            </select>
+            
+            <div id="studentsContainer">
+                <h3>Students</h3>
+                <table id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Marks</th>
+                            <th>Maximum Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsList">
+                        <!-- Student rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button type="button" onclick="generateStudentRows()">Load Students</button>
+            <button type="button" onclick="saveMarks()">Save Marks</button>
+            <button type="button" onclick="goBack()">Back to Dashboard</button>
+        </form>
+    </div>
+
+    <script>
+        // Sample student data (in a real app, this would come from a database)
+        const students = [
+            { id: "1", name: "abc" },
+            { id: "2", name: "John Doe" },
+            { id: "3", name: "Jane Smith" },
+            { id: "4", name: "Alex Johnson" },
+            { id: "5", name: "Sarah Williams" }
+        ];
+
+        function generateStudentRows() {
+            const tableBody = document.getElementById("studentsList");
+            tableBody.innerHTML = ""; // Clear existing rows
+            
+            students.forEach(student => {
+                const row = document.createElement("tr");
+                row.className = "student-row";
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td><input type="number" id="marks-${student.id}" min="0" required></td>
+                    <td><input type="number" id="maxMarks-${student.id}" value="100" min="0" required></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function saveMarks() {
+            const classValue = document.getElementById("class").value;
+            const subject = document.getElementById("subject").value;
+            const examType = document.getElementById("examType").value;
+            
+            if (!classValue || !subject || !examType) {
+                alert("Please select class, subject, and exam type!");
+                return;
+            }
+            
+            const marksData = [];
+            
+            students.forEach(student => {
+                const marksInput = document.getElementById(`marks-${student.id}`);
+                const maxMarksInput = document.getElementById(`maxMarks-${student.id}`);
+                
+                if (marksInput && marksInput.value) {
+                    const marks = parseInt(marksInput.value);
+                    const maxMarks = parseInt(maxMarksInput.value);
+                    
+                    marksData.push({
+                        studentId: student.id,
+                        studentName: student.name,
+                        marks: marks,
+                        maxMarks: maxMarks,
+                        percentage: ((marks / maxMarks) * 100).toFixed(2)
+                    });
+                }
+            });
+            
+            if (marksData.length === 0) {
+                alert("Please enter marks for at least one student!");
+                return;
+            }
+            
+            // Create the marks record
+            const marksRecord = {
+                class: classValue,
+                subject: subject,
+                examType: examType,
+                date: new Date().toISOString().split('T')[0],
+                students: marksData
+            };
+            
+            // Save marks to localStorage
+            let allMarks = JSON.parse(localStorage.getItem("studentMarks")) || [];
+            allMarks.push(marksRecord);
+            localStorage.setItem("studentMarks", JSON.stringify(allMarks));
+            
+            alert("Marks saved successfully!");
+        }
+
+        function goBack() {
+            window.location.href = "teacherdashboard.html";
+        }
+    </script>
+</body>
+</html>

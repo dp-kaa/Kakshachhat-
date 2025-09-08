@@ -1,0 +1,138 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Diary</title>
+    
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background:#7f0df1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #444;
+            margin-top: 20px;
+        }
+
+        /* Select Boxes */
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        /* Button Styling */
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #5648a2;
+        }
+
+        /* AI Response Styling */
+        #aiResponse {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teacher Diary</h1>
+        <label for="classSelect">Select Class:</label>
+        <select id="classSelect">
+            <option value="">Choose a class</option>
+            <option value="Class 1">Class 1</option>
+            <option value="Class 2">Class 2</option>
+            <option value="Class 3">Class 3</option>
+        </select>
+        
+        <h2>Enter Syllabus</h2>
+        <label for="subjectSelect">Select Subject:</label>
+        <select id="subjectSelect">
+            <option value="">Choose a subject</option>
+            <option value="Math">Math</option>
+            <option value="Science">Science</option>
+            <option value="English">English</option>
+        </select>
+        
+        <h2>Daily Progress</h2>
+        <label for="chapterSelect">Select Chapter:</label>
+        <select id="chapterSelect">
+            <option value="">Choose a chapter</option>
+            <option value="Chapter 1">Chapter 1</option>
+            <option value="Chapter 2">Chapter 2</option>
+            <option value="Chapter 3">Chapter 3</option>
+        </select>
+        
+        <button onclick="logProgress()">Log Progress</button>
+        
+       
+    </div>
+
+    <script>
+        function logProgress() {
+            let classSelected = document.getElementById("classSelect").value;
+            let subjectSelected = document.getElementById("subjectSelect").value;
+            let chapterSelected = document.getElementById("chapterSelect").value;
+
+            if (!classSelected || !subjectSelected || !chapterSelected) {
+                alert("Please select all fields!");
+                return;
+            }
+
+            alert(`Logged progress for ${classSelected} - ${subjectSelected} - ${chapterSelected}`);
+        }
+
+        function analyzeSyllabus() {
+            document.getElementById("aiResponse").innerText = "🔍 AI is analyzing the syllabus completion time...";
+            
+            setTimeout(() => {
+                document.getElementById("aiResponse").innerText = "✔ Estimated syllabus completion time: 3 weeks.";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

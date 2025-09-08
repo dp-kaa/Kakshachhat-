@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks</title>
+    
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background:#7f0df1;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Container */
+        .marks-container {
+            width: 90%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Headings */
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #444;
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Subject Section */
+        .subject-section {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        /* Button Styling */
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #5648a2;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .marks-container {
+                width: 100%;
+                padding: 15px;
+            }
+
+            th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="marks-container">
+        <h2>My Academic Performance</h2>
+        <div id="marksContent">
+            <!-- Marks will be dynamically loaded here -->
+            <p>Loading your marks...</p>
+        </div>
+        <button onclick="goBack()">Back to Dashboard</button>
+    </div>
+
+    <script>
+        function loadStudentMarks() {
+            // Get current student (in this case, assuming username is stored)
+            const studentName = "abc"; // This should match the logged-in student
+            
+            // Get all marks from localStorage
+            const allMarks = JSON.parse(localStorage.getItem("studentMarks")) || [];
+            
+            if (allMarks.length === 0) {
+                document.getElementById("marksContent").innerHTML = "<p>No marks available yet.</p>";
+                return;
+            }
+            
+            // Filter marks for the current student
+            let studentMarks = [];
+            allMarks.forEach(record => {
+                record.students.forEach(student => {
+                    if (student.studentName === studentName) {
+                        studentMarks.push({
+                            subject: record.subject,
+                            examType: record.examType,
+                            marks: student.marks,
+                            maxMarks: student.maxMarks,
+                            percentage: student.percentage,
+                            date: record.date
+                        });
+                    }
+                });
+            });
+            
+            if (studentMarks.length === 0) {
+                document.getElementById("marksContent").innerHTML = "<p>No marks found for your account.</p>";
+                return;
+            }
+            
+            // Group marks by subject
+            const subjectGroups = {};
+            studentMarks.forEach(mark => {
+                if (!subjectGroups[mark.subject]) {
+                    subjectGroups[mark.subject] = [];
+                }
+                subjectGroups[mark.subject].push(mark);
+            });
+            
+            // Generate HTML for each subject
+            let marksHTML = "";
+            for (const subject in subjectGroups) {
+                marksHTML += `
+                <div class="subject-section">
+                    <h3>${subject}</h3>
+                    <table>
+                        <tr>
+                            <th>Exam Type</th>
+                            <th>Date</th>
+                            <th>Marks</th>
+                            <th>Maximum</th>
+                            <th>Percentage</th>
+                        </tr>
+                `;
+                
+                subjectGroups[subject].forEach(mark => {
+                    marksHTML += `
+                        <tr>
+                            <td>${mark.examType}</td>
+                            <td>${mark.date}</td>
+                            <td>${mark.marks}</td>
+                            <td>${mark.maxMarks}</td>
+                            <td>${mark.percentage}%</td>
+                        </tr>
+                    `;
+                });
+                
+                marksHTML += `
+                    </table>
+                </div>
+                `;
+            }
+            
+            document.getElementById("marksContent").innerHTML = marksHTML;
+
+            // Store the marks data for use by the recommendation system
+            localStorage.setItem("currentStudentMarks", JSON.stringify(studentMarks));
+        }
+
+        function goBack() {
+            window.location.href = "dashboard.html";
+        }
+        
+        // Load marks when page loads
+        window.onload = loadStudentMarks;
+    </script>
+</body>
+</html>

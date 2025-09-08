@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Panel</title>
+    
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color:#7f0df1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Main Container */
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        /* Header */
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* Timer Text */
+        #timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin: 15px 0;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Student's Panel</h2>
+        <p id="timer">⏳ Checking attendance status...</p>
+        <button id="markButton" onclick="markAttendance()" disabled>Mark Attendance</button>
+    </div>
+
+    <script>
+        function updateTimer() {
+            fetch("http://127.0.0.1:5000/get_attendance_status")
+            .then(res => res.json())
+            .then(data => {
+                console.log("📢 Timer Update:", data);  // ✅ DEBUG: Check response
+
+                document.getElementById("timer").innerText = data.status;
+                let button = document.getElementById("markButton");
+
+                if (data.time_left > 0) {
+                    console.log("✅ Attendance Active. Button Enabled.");
+                    button.disabled = false;  
+                } else {
+                    console.log("❌ Attendance Expired. Button Disabled.");
+                    button.disabled = true;  
+                }
+            })
+            .catch(err => console.error("❌ Error Fetching Timer:", err));
+        }
+
+        function markAttendance() {
+            if (!navigator.geolocation) {
+                alert("❌ Geolocation not supported!");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                console.log("📌 Student Location:", latitude, longitude); // ✅ DEBUG LOCATION
+
+                fetch("http://127.0.0.1:5000/mark_attendance", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ latitude, longitude })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert(data.message || data.error);
+                    console.log("📢 Attendance Response:", data); // ✅ DEBUG RESPONSE
+                })
+                .catch(err => console.error("❌ Error Marking Attendance:", err));
+            }, error => alert("❌ Location fetch failed! Enable location access."));
+        }
+
+        setInterval(updateTimer, 1000);  // ✅ Update every second
+        updateTimer(); 
+    </script>
+</body>
+</html>

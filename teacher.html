@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Panel</title>
+    
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background:#7f0df1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container */
+        .container {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Input Fields */
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        /* Buttons */
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 12px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #5648a2;
+        }
+
+        /* Label Styling */
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Teacher's Panel</h2>
+        <button onclick="setTeacherLocation()">Set My Location</button>
+
+        <label>Attendance Duration (minutes):</label>
+        <input type="number" id="duration" value="1" min="1">
+
+        <button onclick="startAttendance()">Start Attendance</button>
+    </div>
+
+    <script>
+        function setTeacherLocation() {
+            if (!navigator.geolocation) {
+                alert("❌ Geolocation not supported!");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(position => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                fetch("http://127.0.0.1:5000/set_location", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ latitude, longitude })
+                })
+                .then(res => res.json())
+                .then(data => alert(data.message))
+                .catch(err => console.error("❌ Error:", err));
+            }, error => alert("❌ Location fetch failed! Enable location access."));
+        }
+
+        function startAttendance() {
+            let minutes = document.getElementById("duration").value;
+            let duration = minutes * 60; 
+
+            fetch("http://127.0.0.1:5000/start_attendance", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ duration })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(err => console.error("❌ Error:", err));
+        }
+    </script>
+</body>
+</html>

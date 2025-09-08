@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Feedback</title>
+    
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #7f0df1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Form Container */
+        .form-container {
+            width: 90%;
+            max-width: 450px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Feedback Section */
+        .feedback-section {
+            text-align: left;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .feedback-section p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 10px 0;
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #5648a2;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Teacher Feedback</h2>
+        <div class="feedback-section" id="feedbackSection">
+            <h3>Student Feedback</h3>
+            <p><strong>Subject:</strong> <span id="subject"></span></p>
+            <p><strong>Teacher:</strong> <span id="teacher"></span></p>
+            <p><strong>Rating:</strong> <span id="rating"></span> ⭐</p>
+        </div>
+
+        <button onclick="goBack()">Back to Dashboard</button>
+    </div>
+
+    <script>
+        function displayFeedback() {
+            let role = localStorage.getItem("role");
+            if (role !== "teacher") {
+                document.body.innerHTML = "<h2>Access Denied</h2>";
+                return;
+            }
+            
+            let feedbackList = JSON.parse(localStorage.getItem("feedbackList")) || [];
+            let teacherName = localStorage.getItem("username");
+            
+            let filteredFeedback = feedbackList.filter(feedback => feedback.teacher === teacherName);
+            
+            if (filteredFeedback.length > 0) {
+                let feedbackHTML = "<h3>Student Feedback</h3>";
+                filteredFeedback.forEach(feedback => {
+                    feedbackHTML += `<p><strong>Subject:</strong> ${feedback.subject}</p>`;
+                    feedbackHTML += `<p><strong>Rating:</strong> ${feedback.rating} ⭐</p>`;
+                    feedbackHTML += "<hr>";
+                });
+                document.getElementById("feedbackSection").innerHTML = feedbackHTML;
+            } else {
+                document.getElementById("feedbackSection").innerHTML = "<p>No feedback available for you.</p>";
+            }
+        }
+
+        function goBack() {
+            window.location.href = "teacherdashboard.html";
+        }
+
+        window.onload = displayFeedback;
+    </script>
+</body>
+</html>

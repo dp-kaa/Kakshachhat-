@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            background: #7f0df1;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            width: 400px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .dashboard-container:hover {
+            transform: scale(1.02);
+        }
+
+        /* Heading */
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .tab {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            background: linear-gradient(90deg, #ff9966, #ff5e62);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(255, 94, 98, 0.3);
+        }
+
+        .tab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.5);
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background: linear-gradient(90deg, #ff4b5c, #d32f2f);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .dashboard-container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            .tab {
+                font-size: 16px;
+                padding: 12px;
+            }
+        }
+
+        /* Attendance Report Styles */
+        .card {
+            width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: black;
+        }
+        .card-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .filter-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .filter-row select, .filter-row input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .calendar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .calendar-day {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .calendar-day.active {
+            background: #667eea;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading i {
+            font-size: 30px;
+            color: #667eea;
+        }
+        .attendance-status {
+            cursor: pointer;
+        }
+        .status-present {
+            color: green;
+        }
+        .status-absent {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Welcome, Teacher!</h2>
+        <button class="tab" onclick="location.href='teacher.html'">Attendance</button>
+        <button class="tab" onclick="alert('Syllabus Page')">Syllabus</button>
+        <button class="tab" onclick="location.href='mark.html'">Marks</button>
+        <button class="tab" onclick="location.href='teacherfeedbackform.html'">Feedback</button>
+        <button class="tab" onclick="showAttendanceReport()">Attendance List</button>
+        <br><br>
+        <button class="tab logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="attendanceReport" class="page" style="display: none;">
+        <div class="card">
+            <h3 class="card-title">Attendance Management</h3>
+            <div class="filter-row">
+                <select id="attendanceClass">
+                    <option value="6A">Class 6A</option>
+                    <option value="6B">Class 6B</option>
+                    <option value="7A">Class 7A</option>
+                </select>
+                <input type="date" id="attendanceDate">
+            </div>
+            <div class="calendar">
+                <div class="calendar-day" data-date="2025-02-21">21</div>
+                <div class="calendar-day" data-date="2025-02-22">22</div>
+                <div class="calendar-day" data-date="2025-02-23">23</div>
+                <div class="calendar-day" data-date="2025-02-24">24</div>
+                <div class="calendar-day" data-date="2025-02-25">25</div>
+                <div class="calendar-day" data-date="2025-02-26">26</div>
+                <div class="calendar-day active" data-date="2025-02-27">27</div>
+            </div>
+            <table id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added dynamically -->
+                </tbody>
+            </table>
+            <div id="attendanceLoading" class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading attendance data...</p>
+            </div>
+            <button class="tab" onclick="goBackToDashboard()">Back to Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        // Redirect to login page if not logged in
+        if (localStorage.getItem("role") !== "teacher") {
+            window.location.href = "login.html";
+        }
+
+        function logout() {
+            localStorage.removeItem("role"); // Clear login state
+            window.location.href = "login.html"; // Redirect to login page
+        }
+
+        function showAttendanceReport() {
+            document.querySelector('.dashboard-container').style.display = 'none';
+            document.getElementById('attendanceReport').style.display = 'block';
+        }
+
+        function goBackToDashboard() {
+            document.getElementById('attendanceReport').style.display = 'none';
+            document.querySelector('.dashboard-container').style.display = 'block';
+        }
+
+        const studentsByClass = {
+            '6A': [
+                { name: 'John Doe' },
+                { name: 'Jane Smith' },
+                { name: 'Paul Wilson' },
+                { name: 'Frank Taylor' },
+                { name: 'Sophia Brown' },
+                { name: 'Jack Davis' },
+                { name: 'Bob Miller' },
+                { name: 'Eva Williams' },
+                { name: 'Ryan Garcia' },
+                { name: 'Emma Martinez' }
+            ],
+            '6B': [
+                { name: 'David Johnson' },
+                { name: 'Kelly Robinson' },
+                { name: 'Michael Brown' },
+                { name: 'Sarah Wilson' },
+                { name: 'Thomas Davis' }
+            ],
+            '7A': [
+                { name: 'Jennifer Adams' },
+                { name: 'Robert Clark' },
+                { name: 'Emily Lewis' }
+            ]
+        };
+
+        const attendanceByDate = {
+            '6A': {
+                '2025-02-21': { 'John Doe': 'present', 'Jane Smith': 'absent', 'Paul Wilson': 'present', 'Frank Taylor': 'present', 'Sophia Brown': 'present', 'Jack Davis': 'absent', 'Bob Miller': 'present', 'Eva Williams': 'present', 'Ryan Garcia': 'present', 'Emma Martinez': 'absent' },
+                '2025-02-22': { 'John Doe': 'present', 'Jane Smith': 'present', 'Paul Wilson': 'present', 'Frank Taylor': 'present', 'Sophia Brown': 'present', 'Jack Davis': 'absent', 'Bob Miller': 'absent', 'Eva Williams': 'present', 'Ryan Garcia': 'present', 'Emma Martinez': 'absent' },
+                '2025-02-23': { 'John Doe': 'present', 'Jane Smith': 'present', 'Paul Wilson': 'present', 'Frank Taylor': 'present', 'Sophia Brown': 'present', 'Jack Davis': 'absent', 'Bob Miller': 'present', 'Eva Williams': 'present', 'Ryan Garcia': 'absent', 'Emma Martinez': 'present' },
+                '2025-02-24': { 'John Doe': 'absent', 'Jane Smith': 'present', 'Paul Wilson': 'present', 'Frank Taylor': 'absent', 'Sophia Brown': 'present', 'Jack Davis': 'present', 'Bob Miller': 'present', 'Eva Williams': 'present', 'Ryan Garcia': 'present', 'Emma Martinez': 'present' },
+                '2025-02-25': { 'John Doe': 'present', 'Jane Smith': 'present', 'Paul Wilson': 'present', 'Frank Taylor': 'present', 'Sophia Brown': 'absent', 'Jack Davis': 'present', 'Bob Miller': 'present', 'Eva Williams': 'present', 'Ryan Garcia': 'present', 'Emma Martinez': 'present' },
+                '2025-02-26': { 'John Doe': 'present', 'Jane Smith': 'present', 'Paul Wilson': 'present', 'Frank Taylor': 'present', 'Sophia Brown': 'present', 'Jack Davis': 'present', 'Bob Miller': 'present', 'Eva Williams': 'present', 'Ryan Garcia': 'present', 'Emma Martinez': 'present' },
+                '2025-02-27': { 'John Doe': 'present', 'Jane Smith': 'present', 'Paul Wilson': 'present', 'Frank Taylor': 'present', 'Sophia Brown': 'present', 'Jack Davis': 'present', 'Bob Miller': 'present', 'Eva Williams': 'present', 'Ryan Garcia': 'present', 'Emma Martinez': 'present' }
+            }
+        };
+
+        // Initialize attendance table
+        function loadAttendanceTable() {
+            const selectedClass = document.getElementById('attendanceClass').value;
+            const selectedDate = document.getElementById('attendanceDate').value;
+            const attendanceTable = document.getElementById('attendanceTable');
+            const attendanceLoading = document.getElementById('attendanceLoading');
+            
+            // Show loading
+            attendanceTable.style.display = 'none';
+            attendanceLoading.style.display = 'block';
+            
+            fetch(`/get_attendance_data?class=${selectedClass}&date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear existing table rows except header
+                    const tbody = attendanceTable.querySelector('tbody');
+                    tbody.innerHTML = '';
+                    
+                    // Populate table with students
+                    if (studentsByClass[selectedClass]) {
+                        studentsByClass[selectedClass].forEach(student => {
+                            const tr = document.createElement('tr');
+                            
+                            // Name cell
+                            const tdName = document.createElement('td');
+                            tdName.textContent = student.name;
+                            tr.appendChild(tdName);
+                            
+                            // Date cell
+                            const tdDate = document.createElement('td');
+                            tdDate.textContent = formatDate(selectedDate);
+                            tr.appendChild(tdDate);
+                            
+                            // Status cell
+                            const tdStatus = document.createElement('td');
+                            const statusDiv = document.createElement('div');
+                            statusDiv.className = 'attendance-status';
+                            
+                            // Check if attendance data exists
+                            let status = 'absent'; // Default status
+                            if (data[student.name]) {
+                                status = data[student.name];
+                            }
+                            
+                            if (status === 'present') {
+                                statusDiv.classList.add('status-present');
+                                statusDiv.textContent = 'P';
+                            } else {
+                                statusDiv.classList.add('status-absent');
+                                statusDiv.textContent = 'A';
+                            }
+
+                            // Add click event to toggle status
+                            statusDiv.addEventListener('click', function() {
+                                if (this.classList.contains('status-present')) {
+                                    this.classList.remove('status-present');
+                                    this.classList.add('status-absent');
+                                    this.textContent = 'A';
+                                } else {
+                                    this.classList.remove('status-absent');
+                                    this.classList.add('status-present');
+                                    this.textContent = 'P';
+                                }
+                            });
+                            
+                            tdStatus.appendChild(statusDiv);
+                            tr.appendChild(tdStatus);
+                            
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    
+                    // Hide loading and show table
+                    attendanceLoading.style.display = 'none';
+                    attendanceTable.style.display = 'table';
+                })
+                .catch(error => {
+                    console.error('Error fetching attendance data:', error);
+                    // Fallback to previous attendance data
+                    const tbody = attendanceTable.querySelector('tbody');
+                    tbody.innerHTML = '';
+                    if (studentsByClass[selectedClass]) {
+                        studentsByClass[selectedClass].forEach(student => {
+                            const tr = document.createElement('tr');
+                            
+                            // Name cell
+                            const tdName = document.createElement('td');
+                            tdName.textContent = student.name;
+                            tr.appendChild(tdName);
+                            
+                            // Date cell
+                            const tdDate = document.createElement('td');
+                            tdDate.textContent = formatDate(selectedDate);
+                            tr.appendChild(tdDate);
+                            
+                            // Status cell
+                            const tdStatus = document.createElement('td');
+                            const statusDiv = document.createElement('div');
+                            statusDiv.className = 'attendance-status';
+                            
+                            // Check if attendance data exists
+                            let status = 'absent'; // Default status
+                            if (attendanceByDate[selectedClass] && 
+                                attendanceByDate[selectedClass][selectedDate] && 
+                                attendanceByDate[selectedClass][selectedDate][student.name]) {
+                                status = attendanceByDate[selectedClass][selectedDate][student.name];
+                            }
+                            
+                            if (status === 'present') {
+                                statusDiv.classList.add('status-present');
+                                statusDiv.textContent = 'P';
+                            } else {
+                                statusDiv.classList.add('status-absent');
+                                statusDiv.textContent = 'A';
+                            }
+
+                            // Add click event to toggle status
+                            statusDiv.addEventListener('click', function() {
+                                if (this.classList.contains('status-present')) {
+                                    this.classList.remove('status-present');
+                                    this.classList.add('status-absent');
+                                    this.textContent = 'A';
+                                } else {
+                                    this.classList.remove('status-absent');
+                                    this.classList.add('status-present');
+                                    this.textContent = 'P';
+                                }
+                            });
+                            
+                            tdStatus.appendChild(statusDiv);
+                            tr.appendChild(tdStatus);
+                            
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    
+                    // Hide loading and show table
+                    attendanceLoading.style.display = 'none';
+                    attendanceTable.style.display = 'table';
+                });
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+        }
+        
+        // Handle attendance class change
+        document.getElementById('attendanceClass').addEventListener('change', loadAttendanceTable);
+        
+        // Handle attendance date change
+        document.getElementById('attendanceDate').addEventListener('change', loadAttendanceTable);
+        
+        // Handle calendar day clicks
+        const calendarDays = document.querySelectorAll('.calendar-day');
+        calendarDays.forEach(day => {
+            day.addEventListener('click', function() {
+                // Update active day
+                calendarDays.forEach(d => d.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update date input
+                const dateStr = this.getAttribute('data-date');
+                document.getElementById('attendanceDate').value = dateStr;
+                
+                // Load attendance data
+                loadAttendanceTable();
+            });
+        });
+        
+        // Initialize with today's date
+        document.getElementById('attendanceDate').value = '2025-02-27';
+        loadAttendanceTable();
+    </script>
+</body>
+</html>
